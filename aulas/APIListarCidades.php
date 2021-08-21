@@ -2,12 +2,12 @@
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
+    header('Content-type: application/json');
+
 
     $api_token = "permissao";
 
-    if($api_token == 'permissao2'){
-
-        header('Content-type: application/json');
+    if($api_token == 'permissao'){
 
         require_once('dbConnect.php');
 
@@ -18,9 +18,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $response = array();
 
         // Prepara a consulta SQL
-
         $stmt = mysqli_prepare($conn, "SELECT id, nome, estadoID FROM cidade");
-
 
         // Executa a consulta
 

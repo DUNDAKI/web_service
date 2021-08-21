@@ -16,7 +16,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     // Prepara a consulta SQL
 
-    $stmt = mysqli_prepare($conn, "SELECT id, nome, estadoID FROM cidade");
+    $stmt = mysqli_prepare($conn, "SELECT cidade.id, cidade.nome, estado.sigla FROM cidade, estado");
 
 
     // Executa a consulta
@@ -30,7 +30,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     // Gera os dados a serem apresentados
     // em variáveis conforme o select.
 
-    mysqli_stmt_bind_result($stmt, $id, $nome, $estadoID);
+    mysqli_stmt_bind_result($stmt, $id, $nome, $sigla);
 
     // apresenta os dados da consulta
     // var_dump($stmt);
@@ -42,7 +42,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             array_push($response, array(
                 "id" => $id,
                 "nome" => $nome,
-                "estadoID" => $estadoID));
+                "estado" => $sigla));
         }
         
         echo json_encode($response);
