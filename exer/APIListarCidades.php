@@ -1,56 +1,58 @@
 <?php
-
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
-
-
     header('Content-type: application/json');
+    $api_token = "permissao";
 
-    require_once('dbConnect.php');
+    if($api_token == 'permissao'){        
 
-    // Definir UTF8 para a conexão
+        require_once('dbConnect.php');
 
-    mysqli_set_charset($conn, $charset);
+        // Definir UTF8 para a conexão
+        mysqli_set_charset($conn, $charset);
 
-    $response = array();
+        $response = array();
 
-    // Prepara a consulta SQL
+        // Prepara a consulta SQL
+        $stmt = mysqli_prepare($conn, "SELECT  cidade.id, cidade.nome, estado.sigla 
+                                     FROM cidade inner join estado
+                                       on estado.cod_est = cidade.estadoID
+                                       order by cidade.nome");
 
-    $stmt = mysqli_prepare($conn, "SELECT cidade.id, cidade.nome, estado.sigla FROM cidade, estado");
+        // Executa a consulta
+        mysqli_stmt_execute($stmt);
 
+        // Salva o resultado da consulta
 
-    // Executa a consulta
+        mysqli_stmt_store_result($stmt);
 
-    mysqli_stmt_execute($stmt);
+        // Gera os dados a serem apresentados
+        // em variáveis conforme o select.
 
-    // Salva o resultado da consulta
+        mysqli_stmt_bind_result($stmt, $id, $nome, $sigla);
 
-    mysqli_stmt_store_result($stmt);
+        // apresenta os dados da consulta
+        // var_dump($stmt);
 
-    // Gera os dados a serem apresentados
-    // em variáveis conforme o select.
+        if (mysqli_stmt_num_rows($stmt) > 0) {
 
-    mysqli_stmt_bind_result($stmt, $id, $nome, $sigla);
+            while (mysqli_stmt_fetch($stmt)) {
 
-    // apresenta os dados da consulta
-    // var_dump($stmt);
-
-    if (mysqli_stmt_num_rows($stmt) > 0) {
-
-        while (mysqli_stmt_fetch($stmt)) {
-
-            array_push($response, array(
-                "id" => $id,
-                "nome" => $nome,
-                "estado" => $sigla));
+                array_push($response, array(
+                    "id" => $id,
+                    "nome" => $nome,
+                    "estado" => $sigla));
+            }            
+            echo json_encode($response);
+            
+        } 
+        else {
+            echo json_encode($response);
         }
-        
+
+    }else{
+        $response['auth_token'] = false;
         echo json_encode($response);
-        
-    } else {
-        
-        echo json_encode($response);
-        
     }
 }
-?>
+?> 
